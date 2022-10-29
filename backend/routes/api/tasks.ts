@@ -3,8 +3,8 @@ import {
   deleteTask,
   updateTask,
   getAllTasks,
-} from "../controllers/tasksController";
-import verifyJWT from "../middleware/verifyJWT";
+} from "../../controllers/tasksController";
+import verifyJWT from "../../middleware/verifyJWT";
 
 const express = require("express");
 const taskRouter = express.Router();
