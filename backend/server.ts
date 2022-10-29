@@ -7,7 +7,7 @@ import registerRouter from "./routes/register";
 import authRouter from "./routes/auth";
 import refreshRouter from "./routes/refresh";
 import logoutRouter from "./routes/logout";
-import taskRouter from "./routes/tasks";
+import taskRouter from "./routes/api/tasks";
 dotenv.config();
 
 const PORT = process.env.PORT || 8000;
