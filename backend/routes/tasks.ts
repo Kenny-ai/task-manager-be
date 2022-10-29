@@ -3,7 +3,7 @@ import {
   deleteTask,
   updateTask,
   getAllTasks,
-} from "../middleware/tasksController";
+} from "../controllers/tasksController";
 import verifyJWT from "../middleware/verifyJWT";
 
 const express = require("express");

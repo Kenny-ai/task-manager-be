@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import User from "../model/User";
-import { tokenBearer } from "./verifyJWT";
+import { tokenBearer } from "../middleware/verifyJWT";
 
 export const getAllTasks = async (req: Request, res: Response) => {
   const foundUser = await User.findOne({
@@ -32,6 +32,7 @@ export const createNewTask = async (req: Request, res: Response) => {
     res.status(500).send(error);
   }
 };
+
 export const updateTask = async (req: Request, res: Response) => {
   if (!req.body.taskId)
     return res.status(400).json({ message: "taskId parameter is required" });
@@ -58,6 +59,7 @@ export const updateTask = async (req: Request, res: Response) => {
     res.sendStatus(500);
   }
 };
+
 export const deleteTask = async (req: Request, res: Response) => {
   if (!req.body.taskId)
     return res.status(400).json({ message: "taskId parameter is required" });
@@ -68,6 +70,7 @@ export const deleteTask = async (req: Request, res: Response) => {
       { username: tokenBearer.username },
       { $pull: { tasks: { _id: taskId } } }
     );
+
     return res.status(200).json({ message: "Task successfully deleted" });
   } catch (error) {
     console.error(error);
