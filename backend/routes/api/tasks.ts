@@ -13,7 +13,7 @@ taskRouter
   .route("/")
   .get(verifyJWT, getAllTasks)
   .post(verifyJWT, createNewTask)
-  .put(verifyJWT, updateTask)
-  .delete(verifyJWT, deleteTask);
+  .put(verifyJWT, updateTask);
 
+taskRouter.route("/:id").delete(verifyJWT, deleteTask);
 export default taskRouter;
