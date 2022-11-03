@@ -8,7 +8,9 @@
   "main": "server.ts",
   "scripts": {
     "test": "npm run test",
-    "start": "ts-node-dev --respawn server.ts"
+    "dev": "ts-node-dev --respawn server.ts",
+    "start": "node dist/server.ts",
+    "postinstall": "tsc"
   },
   "author": "Kenny Soyoye",
   "license": "ISC",
