@@ -10,7 +10,7 @@ const handleLogin = async (req: Request, res: Response) => {
       .status(400)
       .json({ message: "Username and password are required" });
 
-  let foundUser = await User.findOne({ username }).exec();
+  const foundUser = await User.findOne({ username }).exec();
 
   if (!foundUser)
     return res.status(401).json({ message: `incorrect username or password` });
@@ -36,15 +36,19 @@ const handleLogin = async (req: Request, res: Response) => {
     }
   );
 
-  foundUser.refreshToken = refreshToken;
-  foundUser.save();
+  await User.findOneAndUpdate({ username }, { $set: { refreshToken } });
 
-  res.cookie("jwt", refreshToken, {
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-    maxAge: 24 * 60 * 60 * 1000,
-  });
+  // foundUser.refreshToken = refreshToken;
+  // await foundUser.save();
+
+  // res.cookie("jwt", refreshToken, {
+  //   httpOnly: true,
+  //   // domain: "https://kenybolu-url-shortener.vercel.app",
+  //   sameSite: "none",
+  //   // secure: true,
+  //   maxAge: 24 * 60 * 60 * 1000,
+  // });
+  res.cookie("jwt", refreshToken);
   res.status(200).json({ accessToken });
 };
 export default handleLogin;

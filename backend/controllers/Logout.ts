@@ -3,7 +3,8 @@ import User from "../model/User";
 
 const handleLogout = async (req: Request, res: Response) => {
   const cookie = req.headers.cookie;
-  if (!cookie) return res.status(401);
+
+  if (!cookie) return res.sendStatus(401);
 
   const refreshToken = cookie!.slice(4);
 

@@ -61,10 +61,10 @@ export const updateTask = async (req: Request, res: Response) => {
 };
 
 export const deleteTask = async (req: Request, res: Response) => {
-  if (!req.body.taskId)
+  if (!req.params.id)
     return res.status(400).json({ message: "taskId parameter is required" });
 
-  const { taskId } = req.body;
+  const taskId = req.params.id;
   try {
     await User?.findOneAndUpdate(
       { username: tokenBearer.username },
