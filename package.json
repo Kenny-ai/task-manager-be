@@ -9,7 +9,7 @@
   "scripts": {
     "test": "npm run test",
     "dev": "ts-node-dev --respawn server.ts",
-    "start": "node dist/server.ts",
+    "start": "node dist/server.js",
     "postinstall": "tsc"
   },
   "author": "Kenny Soyoye",
