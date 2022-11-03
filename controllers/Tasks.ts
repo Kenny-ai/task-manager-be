@@ -6,6 +6,7 @@ export const getAllTasks = async (req: Request, res: Response) => {
   const foundUser = await User.findOne({
     username: tokenBearer.username,
   }).exec();
+  if (!foundUser) return res.status(404).json({ message: "User not found" });
   const tasks = foundUser?.tasks;
   res.status(200).json({ tasks });
 };
@@ -42,6 +43,14 @@ export const updateTask = async (req: Request, res: Response) => {
   if (!taskId) return res.status(400).json({ message: "Task ID is required" });
 
   try {
+    const foundUser = await User.findOne({
+      username: tokenBearer.username,
+    }).exec();
+
+    const foundTask = foundUser?.tasks.find((task) => task._id == taskId);
+
+    if (!foundTask) return res.status(404).json({ message: "Task not found" });
+
     await User?.findOneAndUpdate(
       { username: tokenBearer.username, "tasks._id": taskId },
       {
