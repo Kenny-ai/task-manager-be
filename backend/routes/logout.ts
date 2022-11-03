@@ -1,5 +1,5 @@
 import express from "express";
-import handleLogout from "../controllers/logoutController";
+import handleLogout from "../controllers/Logout";
 
 const logoutRouter = express.Router();
 

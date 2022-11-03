@@ -1,5 +1,5 @@
 import express from "express";
-import handleRefresh from "../controllers/refreshController";
+import handleRefresh from "../controllers/Refresh";
 
 const refreshRouter = express.Router();
 
