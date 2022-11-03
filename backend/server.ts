@@ -2,12 +2,16 @@ import { Application } from "express";
 import dotenv from "dotenv";
 import express from "express";
 import { connectDB } from "./config/dbConn";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { corsOptions } from "./config/corsOptions";
 import mongoose from "mongoose";
 import registerRouter from "./routes/register";
 import authRouter from "./routes/auth";
 import refreshRouter from "./routes/refresh";
 import logoutRouter from "./routes/logout";
 import taskRouter from "./routes/api/tasks";
+import { credentials } from "./middleware/credentials";
 dotenv.config();
 
 const PORT = process.env.PORT || 8000;
@@ -16,8 +20,12 @@ const PORT = process.env.PORT || 8000;
 connectDB();
 
 const app: Application = express();
+
+app.use(credentials);
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cookieParser());
 
 const message = {
   name: "Kenny",
