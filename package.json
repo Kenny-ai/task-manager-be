@@ -1,6 +1,9 @@
 {
   "name": "task-manager-backend",
   "version": "1.0.0",
+  "engines": {
+    "node": "16.x"
+  },
   "description": "backend package manager of the task-manager app",
   "main": "server.ts",
   "scripts": {
