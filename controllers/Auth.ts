@@ -41,14 +41,13 @@ const handleLogin = async (req: Request, res: Response) => {
   // foundUser.refreshToken = refreshToken;
   // await foundUser.save();
 
-  // res.cookie("jwt", refreshToken, {
-  //   httpOnly: true,
-  //   // domain: "https://kenybolu-url-shortener.vercel.app",
-  //   sameSite: "none",
-  //   // secure: true,
-  //   maxAge: 24 * 60 * 60 * 1000,
-  // });
-  res.cookie("jwt", refreshToken);
+  res.cookie("jwt", refreshToken, {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+  // res.cookie("jwt", refreshToken);
   res.status(200).json({ accessToken });
 };
 export default handleLogin;
