@@ -10,7 +10,8 @@
     "test": "npm run test",
     "dev": "ts-node-dev --respawn server.ts",
     "start": "node dist/server.js",
-    "postinstall": "tsc"
+    "postinstall": "tsc",
+    "build": "tsc"
   },
   "author": "Kenny Soyoye",
   "license": "ISC",
