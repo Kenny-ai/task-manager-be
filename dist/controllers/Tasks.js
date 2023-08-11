@@ -19,6 +19,8 @@ const getAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const foundUser = yield User_1.default.findOne({
         username: verifyJWT_1.tokenBearer.username,
     }).exec();
+    if (!foundUser)
+        return res.status(404).json({ message: "User not found" });
     const tasks = foundUser === null || foundUser === void 0 ? void 0 : foundUser.tasks;
     res.status(200).json({ tasks });
 });
@@ -50,6 +52,12 @@ const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     if (!taskId)
         return res.status(400).json({ message: "Task ID is required" });
     try {
+        const foundUser = yield User_1.default.findOne({
+            username: verifyJWT_1.tokenBearer.username,
+        }).exec();
+        const foundTask = foundUser === null || foundUser === void 0 ? void 0 : foundUser.tasks.find((task) => task._id == taskId);
+        if (!foundTask)
+            return res.status(404).json({ message: "Task not found" });
         yield (User_1.default === null || User_1.default === void 0 ? void 0 : User_1.default.findOneAndUpdate({ username: verifyJWT_1.tokenBearer.username, "tasks._id": taskId }, {
             $set: {
                 "tasks.$.title": title,

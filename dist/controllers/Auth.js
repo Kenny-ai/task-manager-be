@@ -37,14 +37,13 @@ const handleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     yield User_1.default.findOneAndUpdate({ username }, { $set: { refreshToken } });
     // foundUser.refreshToken = refreshToken;
     // await foundUser.save();
-    // res.cookie("jwt", refreshToken, {
-    //   httpOnly: true,
-    //   // domain: "https://kenybolu-url-shortener.vercel.app",
-    //   sameSite: "none",
-    //   // secure: true,
-    //   maxAge: 24 * 60 * 60 * 1000,
-    // });
-    res.cookie("jwt", refreshToken);
+    res.cookie("jwt", refreshToken, {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000,
+    });
+    // res.cookie("jwt", refreshToken);
     res.status(200).json({ accessToken });
 });
 exports.default = handleLogin;

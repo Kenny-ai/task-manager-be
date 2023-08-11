@@ -11,7 +11,7 @@
     "dev": "ts-node-dev --respawn server.ts",
     "start": "node dist/server.js",
     "postinstall": "tsc",
-    "tsc": "tsc"
+    "build": "npx tsc"
   },
   "author": "Kenny Soyoye",
   "license": "ISC",
