@@ -8,24 +8,24 @@ import {
   getAllBoards,
   getAllUserBoards,
 } from "../controllers/boards";
-import verifyJWT from "../middleware/verifyJWT";
+import { protect } from "../middleware/auth";
 
 const express = require("express");
 const boardRouter = express.Router();
 
 boardRouter
   .route("/")
-  .get(verifyJWT, getAllUserBoards)
-  .post(verifyJWT, createNewBoard)
-  .put(verifyJWT, updateBoard)
-  .delete(verifyJWT, deleteBoard);
+  .get(protect, getAllUserBoards)
+  .post(protect, createNewBoard)
+  .put(protect, updateBoard)
+  .delete(protect, deleteBoard);
 
 boardRouter.get("/all", getAllBoards);
 
 boardRouter
   .route("/tasks")
-  .post(verifyJWT, createNewTask)
-  .put(verifyJWT, updateTask)
-  .delete(verifyJWT, deleteTask);
+  .post(protect, createNewTask)
+  .put(protect, updateTask)
+  .delete(protect, deleteTask);
 
 export default boardRouter;
