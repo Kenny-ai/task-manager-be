@@ -44,7 +44,15 @@ export const login = async (req: Request, res: Response) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({ success: true, data: { user, accessToken } });
+    res.status(200).json({
+      success: true,
+      data: {
+        name: user.name,
+        id: user.id,
+        refreshToken: user.refreshToken,
+        token: accessToken,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
