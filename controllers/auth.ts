@@ -40,6 +40,7 @@ export const login = async (req: Request, res: Response) => {
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
       sameSite: "lax",
+      domain: "localhost",
       // secure: true,
       maxAge: 24 * 60 * 60 * 1000,
     });
