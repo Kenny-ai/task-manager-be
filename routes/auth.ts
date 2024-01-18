@@ -2,7 +2,7 @@ import {
   getAllUsers,
   login,
   logout,
-  refresh,
+  // refresh,
   register,
 } from "../controllers/auth";
 
@@ -11,7 +11,7 @@ const authRouter = express.Router();
 
 authRouter.post("/login", login);
 authRouter.get("/logout", logout);
-authRouter.get("/refresh", refresh);
+// authRouter.get("/refresh", refresh);
 authRouter.post("/register", register);
 authRouter.get("/all_users", getAllUsers);
 

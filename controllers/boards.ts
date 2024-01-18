@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import Board from "../model/Board";
+import { IGetAuthReqInfo } from "../utils/types";
+import { tokenBearer } from "../middleware/auth";
 
 export const getAllBoards = async (req: Request, res: Response) => {
   try {
@@ -10,8 +12,8 @@ export const getAllBoards = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllUserBoards = async (req: Request, res: Response) => {
-  const id = req.query.id;
+export const getAllUserBoards = async (req: IGetAuthReqInfo, res: Response) => {
+  const id = tokenBearer.id;
   try {
     const boards = await Board.find({ owner: id });
     return res.status(200).json({ success: true, data: boards });
@@ -25,6 +27,7 @@ export const createNewBoard = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Board name is required" });
 
   try {
+    req.body.owner = tokenBearer.id;
     const board = await Board.create(req.body);
 
     res.status(201).json({ success: true, data: board });
@@ -35,24 +38,26 @@ export const createNewBoard = async (req: Request, res: Response) => {
 };
 
 export const updateBoard = async (req: Request, res: Response) => {
-  if (!req.query.id)
+  if (!req.query._id)
     return res.status(400).json({ message: "Board id is required" });
 
-  const id = req.query.id;
+  const id = req.query._id;
 
-  const { name, phases } = req.body;
+  const { name, phaseList } = req.body;
 
   try {
     const board = await Board.findByIdAndUpdate(
       id,
-      { name, phases },
+      { name, phaseList },
       { new: true }
     );
+
     if (!board)
       return res
         .status(404)
         .json({ success: false, message: `board with id ${id} not found` });
-    return res.status(201).json({ success: true, data: board });
+
+    return res.status(201).json({ success: true, board });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
@@ -82,6 +87,17 @@ export const deleteBoard = async (req: Request, res: Response) => {
   }
 };
 
+export const getUserTasks = async (req: IGetAuthReqInfo, res: Response) => {
+  const { boardId } = req.query;
+  try {
+    const board = await Board.findById(boardId);
+    const tasks = board?.tasks;
+    return res.status(200).json({ success: true, data: tasks });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const createNewTask = async (req: Request, res: Response) => {
   if (!req.query.id)
     return res.status(400).json({ message: "Board id is required" });
@@ -106,7 +122,7 @@ export const createNewTask = async (req: Request, res: Response) => {
     if (!board)
       return res.status(404).json({ message: `board with id ${id} not found` });
 
-    res.status(201).json({ success: true, message: "Task created" });
+    res.status(201).json({ success: true, board });
   } catch (error) {
     console.error(error);
     res.status(500).send(error);
@@ -119,7 +135,7 @@ export const updateTask = async (req: Request, res: Response) => {
   if (!taskId || !boardId)
     return res.status(400).json({ message: "board and task id are required" });
 
-  const { title, description, subtasks, phase } = req.body;
+  const { title, description, subtasks, status } = req.body;
 
   try {
     // const board = await User.updateOne(
@@ -145,7 +161,7 @@ export const updateTask = async (req: Request, res: Response) => {
           "tasks.$.title": title,
           "tasks.$.description": description,
           "tasks.$.subtasks": subtasks,
-          "tasks.$.phase": phase,
+          "tasks.$.status": status,
         },
       }
     );

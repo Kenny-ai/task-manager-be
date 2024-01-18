@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import User from "../model/User";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { IGetAuthReqInfo } from "../utils/types";
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: IGetAuthReqInfo, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password)
     return res.status(400).json({ message: "email and password are required" });
@@ -12,103 +12,71 @@ export const login = async (req: Request, res: Response) => {
     const user = await User.findOne({ email }).exec();
 
     if (!user)
-      return res.status(401).json({ message: `incorrect email or password` });
+      return res.status(401).json({ message: `Invalid login credentials` });
 
     // evaluate password
-    const match = await bcrypt.compare(password, user.password!);
+    const match = await user.matchPassword(password);
 
     if (!match)
-      return res.status(401).json({ message: `incorrect email or password` });
-
-    const accessToken = jwt.sign(
-      { email },
-      `${process.env.ACCESS_TOKEN_SECRET}`,
-      {
-        expiresIn: "1d",
-      }
-    );
-    const refreshToken = jwt.sign(
-      { email },
-      `${process.env.REFRESH_TOKEN_SECRET}`,
-      {
-        expiresIn: "1d",
-      }
-    );
-
-    await User.findOneAndUpdate({ email }, { $set: { refreshToken } });
-
-    res.cookie("jwt", refreshToken, {
-      httpOnly: true,
-      sameSite: "lax",
-      domain: "localhost",
-      // secure: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    res.status(200).json({
-      success: true,
-      data: {
-        name: user.name,
-        id: user.id,
-        refreshToken: user.refreshToken,
-        token: accessToken,
-      },
-    });
+      return res.status(401).json({ message: `Invalid login credentials` });
+    sendTokenResponse(user, 200, res);
   } catch (error) {
-    console.error(error);
+    console.error(error); 
     res.sendStatus(500);
   }
+};
+
+const sendTokenResponse = async (
+  user: any,
+  statusCode: number,
+  res: Response
+) => {
+  const accessToken = user.getSignedAccessToken();
+
+  const index = accessToken.lastIndexOf(".");
+  const payload = accessToken.substring(0, index);
+  const signature = accessToken.substring(index);
+
+  // const refreshToken = user.getSignedRefreshToken();
+
+  res.cookie("payload", payload, {
+    sameSite: "lax",
+    // domain: "localhost",
+    // secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
+  res.cookie("signature", signature, {
+    httpOnly: true,
+    sameSite: "lax",
+    // domain: "localhost",
+    // secure: true,
+  });
+
+  // res.cookie("refreshToken", refreshToken, {
+  //   httpOnly: true,
+  //   sameSite: "lax",
+  //   maxAge: 24 * 60 * 60 * 1000,
+  //   // domain: "localhost",
+  //   // secure: true,
+  // });
+
+  res.status(statusCode).json({
+    success: true,
+    name: user.name,
+    id: user._id,
+  });
 };
 
 export const logout = async (req: Request, res: Response) => {
-  const cookie = req.headers.cookie;
-
-  if (!cookie) return res.sendStatus(401);
-
-  const refreshToken = cookie!.slice(4);
-
   try {
-    const user = await User.findOne({ refreshToken }).exec();
-
-    if (!user) {
-      return res.status(403).json({ message: "user is not logged in" });
-    }
-
-    user.refreshToken = "";
-    await user.save();
-
-    res.clearCookie("jwt", { httpOnly: true, sameSite: "none", secure: true });
+    // if (!user) {
+    //   return res.status(403).json({ message: "user is not logged in" });
+    // }
+    res.clearCookie("payload");
+    res.clearCookie("signature");
 
     res.status(200).json({ message: "successfully logged out" });
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-};
-
-export const refresh = async (req: Request, res: Response) => {
-  const cookie = req.headers.cookie;
-
-  if (!cookie) return res.status(401).json({ message: "No cookie detected" });
-
-  const refreshToken = cookie!.slice(4);
-  try {
-    const user = await User.findOne({ refreshToken }).exec();
-
-    if (!user) return res.sendStatus(403);
-    jwt.verify(
-      refreshToken,
-      `${process.env.REFRESH_TOKEN_SECRET}`,
-      (err: any, decoded: any) => {
-        if (err || user.email !== decoded.email) return res.sendStatus(403);
-        const accessToken = jwt.sign(
-          { email: decoded.email },
-          `${process.env.ACCESS_TOKEN_SECRET}`,
-          { expiresIn: "30m" }
-        );
-        res.json({ accessToken });
-      }
-    );
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
@@ -137,9 +105,8 @@ export const register = async (req: Request, res: Response) => {
       email,
       password: hashedPassword,
     });
-    res
-      .status(201)
-      .json({ message: `New user ${email} has been created`, user });
+
+    sendTokenResponse(user, 201, res);
   } catch (error) {
     res.status(500).send(error);
     console.error(error);
@@ -155,3 +122,33 @@ export const getAllUsers = async (req: Request, res: Response) => {
     res.sendStatus(500);
   }
 };
+
+// export const refresh = async (req: Request, res: Response) => {
+//   const refreshToken = req.cookies.refreshToken;
+
+//   if (!refreshToken)
+//     return res.status(401).json({ message: "No cookie detected" });
+
+//   try {
+//     const user = await User.findOne({ refreshToken }).exec();
+
+//     if (!user) return res.sendStatus(403);
+//     jwt.verify(
+//       refreshToken,
+//       `${process.env.REFRESH_TOKEN_SECRET}`,
+//       (err: any, decoded: any) => {
+//         if (err || user._id !== decoded.id)
+//           return res.sendStatus(403).json({ message: "Invalid refresh token" });
+//         const accessToken = jwt.sign(
+//           { id: decoded.id },
+//           `${process.env.ACCESS_TOKEN_SECRET}`,
+//           { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRE}` }
+//         );
+//         res.json({ accessToken });
+//       }
+//     );
+//   } catch (error) {
+//     console.error(error);
+//     res.sendStatus(500);
+//   }
+// };

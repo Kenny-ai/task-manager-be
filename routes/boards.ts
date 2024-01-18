@@ -7,6 +7,7 @@ import {
   updateBoard,
   getAllBoards,
   getAllUserBoards,
+  getUserTasks,
 } from "../controllers/boards";
 import { protect } from "../middleware/auth";
 
@@ -24,6 +25,7 @@ boardRouter.get("/all", getAllBoards);
 
 boardRouter
   .route("/tasks")
+  .get(protect, getUserTasks)
   .post(protect, createNewTask)
   .put(protect, updateTask)
   .delete(protect, deleteTask);
