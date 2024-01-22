@@ -40,7 +40,8 @@ const sendTokenResponse = async (
   // const refreshToken = user.getSignedRefreshToken();
 
   res.cookie("payload", payload, {
-    sameSite: "lax",
+    // sameSite: "lax",
+    sameSite: "none",
     // domain: "localhost",
     secure: true,
     maxAge: 24 * 60 * 60 * 1000,
@@ -48,7 +49,8 @@ const sendTokenResponse = async (
 
   res.cookie("signature", signature, {
     httpOnly: true,
-    sameSite: "lax",
+    // sameSite: "lax",
+    sameSite: "none",
     // domain: "localhost",
     secure: true,
   });
