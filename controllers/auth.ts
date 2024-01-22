@@ -42,7 +42,7 @@ const sendTokenResponse = async (
   res.cookie("payload", payload, {
     sameSite: "lax",
     // domain: "localhost",
-    // secure: true,
+    secure: true,
     maxAge: 24 * 60 * 60 * 1000,
   });
 
@@ -50,7 +50,7 @@ const sendTokenResponse = async (
     httpOnly: true,
     sameSite: "lax",
     // domain: "localhost",
-    // secure: true,
+    secure: true,
   });
 
   // res.cookie("refreshToken", refreshToken, {
