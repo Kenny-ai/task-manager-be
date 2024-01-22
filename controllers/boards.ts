@@ -43,12 +43,12 @@ export const updateBoard = async (req: Request, res: Response) => {
 
   const id = req.query._id;
 
-  const { name, phaseList } = req.body;
+  const { name, phaseList, tasks } = req.body;
 
   try {
     const board = await Board.findByIdAndUpdate(
       id,
-      { name, phaseList },
+      { name, phaseList, tasks },
       { new: true }
     );
 
