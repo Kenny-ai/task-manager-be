@@ -21,9 +21,9 @@ export const protect = async (
     authHeader = authHeader.slice("bearer".length).trim();
   }
   // const payload = req.cookies.payload;
-  const signature = req.cookies.signature;
+  // const signature = req.cookies.signature;
 
-  const token = authHeader + signature;
+  const token = authHeader
   // console.log(authHeader);
   jwt.verify(
     token,
@@ -33,12 +33,12 @@ export const protect = async (
 
       tokenBearer = decoded;
 
-      res.cookie("payload", authHeader, {
-        sameSite: "lax",
-        // domain: "localhost",
-        // secure: true,
-        maxAge: 24 * 60 * 60 * 1000,
-      });
+      // res.cookie("payload", authHeader, {
+      //   sameSite: "lax",
+      //   // domain: "localhost",
+      //   // secure: true,
+      //   maxAge: 24 * 60 * 60 * 1000,
+      // });
 
       next();
     }

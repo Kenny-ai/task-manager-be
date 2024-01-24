@@ -31,29 +31,29 @@ const sendTokenResponse = async (
   statusCode: number,
   res: Response
 ) => {
-  const accessToken = user.getSignedAccessToken();
+  const token = user.getSignedAccessToken();
 
-  const index = accessToken.lastIndexOf(".");
-  const payload = accessToken.substring(0, index);
-  const signature = accessToken.substring(index);
+  // const index = accessToken.lastIndexOf(".");
+  // const payload = accessToken.substring(0, index);
+  // const signature = accessToken.substring(index);
 
   // const refreshToken = user.getSignedRefreshToken();
 
-  res.cookie("payload", payload, {
-    // sameSite: "lax",
-    sameSite: "none",
-    // domain: "localhost",
-    // secure: true,
-    maxAge: 24 * 60 * 60 * 1000,
-  });
+  // res.cookie("payload", payload, {
+  //   // sameSite: "lax",
+  //   sameSite: "none",
+  //   // domain: "localhost",
+  //   secure: true,
+  //   maxAge: 24 * 60 * 60 * 1000,
+  // });
 
-  res.cookie("signature", signature, {
-    httpOnly: true,
-    // sameSite: "lax",
-    sameSite: "none",
-    // domain: "localhost",
-    secure: true,
-  });
+  // res.cookie("signature", signature, {
+  //   httpOnly: true,
+  //   // sameSite: "lax",
+  //   sameSite: "none",
+  //   // domain: "localhost",
+  //   secure: true,
+  // });
 
   // res.cookie("refreshToken", refreshToken, {
   //   httpOnly: true,
@@ -66,7 +66,7 @@ const sendTokenResponse = async (
   res.status(statusCode).json({
     success: true,
     name: user.name,
-    id: user._id,
+    token
   });
 };
 
