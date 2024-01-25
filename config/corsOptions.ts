@@ -3,9 +3,7 @@ type Origin = string | undefined;
 
 export const allowedOrigins: Origin[] = [
   "http://localhost:3000",
-  "http://localhost:5500",
-  "http://127.0.0.1:5500",
-  "https://kenybolu-url-shortener.vercel.app",
+  "https://kb-task-manager.vercel.app",
 ];
 
 export const corsOptions = {
