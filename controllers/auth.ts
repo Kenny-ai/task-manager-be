@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import User from "../model/User";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { IGetAuthReqInfo } from "../utils/types";
 
 export const login = async (req: IGetAuthReqInfo, res: Response) => {
