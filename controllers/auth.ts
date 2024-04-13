@@ -21,7 +21,7 @@ export const login = async (req: IGetAuthReqInfo, res: Response) => {
       return res.status(401).json({ message: `Invalid login credentials` });
     sendTokenResponse(user, 200, res);
   } catch (error) {
-    console.error(error); 
+    console.error(error);
     res.sendStatus(500);
   }
 };
@@ -66,7 +66,7 @@ const sendTokenResponse = async (
   res.status(statusCode).json({
     success: true,
     name: user.name,
-    token
+    token,
   });
 };
 
